@@ -1,8 +1,28 @@
 {
   "name": "@kurama-labs/nghtml",
-  "version": "0.3.0",
+  "version": "1.0.0",
   "description": "Angular-inspired control flow for Lit templates",
+  "keywords": [
+    "angular",
+    "web-components",
+    "lit-html",
+    "lit",
+    "nghtml",
+    "control-flow",
+    "template"
+  ],
   "type": "module",
+  "homepage": "https://kai1992cool.github.io/nghtml/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kai1992cool/nghtml.git",
+    "directory": "projects/nghtml"
+  },
+  "bugs": {
+    "url": "https://github.com/kai1992cool/nghtml/issues"
+  },
+  "license": "MIT",
+  "author": "Naren",
   "files": [
     "dist-package",
     "README.md"
