@@ -69,7 +69,9 @@ demo lives in its own folder with an `index.html` route and component module:
 task list, focus timer, expense tracker, habit tracker, shopping cart, quiz,
 guest list, Kanban board, appointment booking, and music player. The production
 build includes the landing page, [Getting Started](./getting-started/), gallery,
-and all ten standalone demo routes.
+and all ten standalone demo routes. Each demo also has an isolated project in
+`demos/<demo>/stackblitz/`, linked from the top-right of its demo page. If
+StackBlitz does not finish loading, wait two minutes and refresh the opened page.
 
 ## GitHub Pages
 

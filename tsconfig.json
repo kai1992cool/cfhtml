@@ -13,5 +13,6 @@
     "strict": true,
     "types": ["vite/client", "vitest/globals"]
   },
-  "include": ["src", "demos/**/*.ts", "vite.config.ts", "vite.lib.config.ts"]
+  "include": ["src", "demos/**/*.ts", "vite.config.ts", "vite.lib.config.ts"],
+  "exclude": ["demos/**/stackblitz/**"]
 }

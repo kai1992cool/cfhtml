@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Habit tracker — NGHTML</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet" />
+    <style>
+      :root { color-scheme: dark; font-family: 'DM Sans', sans-serif; color: #f1eadc; background: #111827; }
+      * { box-sizing: border-box; }
+      body { min-width: 320px; min-height: 100vh; margin: 0; padding: 48px 20px; background: linear-gradient(145deg, #101827, #171e2e 58%, #111827); }
+      main { width: min(760px, 100%); margin: 0 auto; }
+      h1 { margin: 0 0 20px; font: 800 30px Manrope, sans-serif; }
+      section { border: 1px solid #384760; border-radius: 15px; padding: 20px; background: linear-gradient(145deg, #1d2638, #161d2c); }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Habit tracker</h1>
+      <section><habit-demo></habit-demo></section>
+    </main>
+    <script type="module" src="/main.ts"></script>
+  </body>
+</html>
