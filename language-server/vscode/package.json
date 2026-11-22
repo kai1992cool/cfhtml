@@ -1,0 +1,63 @@
+{
+  "name": "nghtml-vscode",
+  "displayName": "NGHTML",
+  "description": "Language support for NGHTML Lit templates",
+  "version": "0.1.2",
+  "publisher": "kurama-labs",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kai1992cool/cfhtml"
+  },
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.96.0"
+  },
+  "categories": ["Programming Languages"],
+  "activationEvents": [
+    "onStartupFinished",
+    "onLanguage:html",
+    "onLanguage:nghtml",
+    "onLanguage:typescript",
+    "onLanguage:javascript",
+    "onCommand:nghtml.showOutput"
+  ],
+  "main": "./client/extension.js",
+  "files": [
+    "client/**",
+    "server/**",
+    "node_modules/**",
+    "language-configuration.json",
+    "LICENSE",
+    "README.md"
+  ],
+  "dependencies": {
+    "vscode-languageclient": "^9.0.0"
+  },
+  "contributes": {
+    "commands": [
+      {
+        "command": "nghtml.showOutput",
+        "title": "NGHTML: Show Language Server Output"
+      }
+    ],
+    "languages": [
+      {
+        "id": "nghtml",
+        "aliases": ["NGHTML", "nghtml"],
+        "extensions": [".nghtml"],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "configuration": {
+      "title": "NGHTML",
+      "properties": {
+        "nghtml.trace.server": {
+          "scope": "window",
+          "type": "string",
+          "enum": ["off", "messages", "verbose"],
+          "default": "off"
+        }
+      }
+    }
+  }
+}

@@ -24,5 +24,6 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     restoreMocks: true,
+    exclude: ['language-server/test/**', 'node_modules/**', 'dist/**'],
   },
 });

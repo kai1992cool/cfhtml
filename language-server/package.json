@@ -1,0 +1,26 @@
+{
+  "name": "@kurama-labs/nghtml-language-server",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "nghtml-language-server": "./bin/nghtml-language-server.js",
+    "nghtml": "./bin/nghtml.js"
+  },
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "node --test test/*.test.js",
+    "check": "node bin/nghtml.js check",
+    "vscode:package": "node scripts/publish-vscode.js package",
+    "vscode:publish": "node scripts/publish-vscode.js publish"
+  },
+  "dependencies": {
+    "vscode-languageserver": "^9.0.0",
+    "vscode-languageserver-textdocument": "^1.0.0"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.96.0",
+    "@vscode/vsce": "^3.6.0",
+    "vscode-languageclient": "^9.0.0"
+  }
+}
