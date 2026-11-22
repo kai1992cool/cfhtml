@@ -1,0 +1,39 @@
+{
+  "name": "@kurama-labs/nghtml",
+  "version": "0.3.0",
+  "description": "Angular-inspired control flow for Lit templates",
+  "type": "module",
+  "files": [
+    "dist-package",
+    "README.md"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist-package/types/nghtml.d.ts",
+      "import": "./dist-package/nghtml.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "types": "./dist-package/types/nghtml.d.ts",
+  "sideEffects": false,
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build && npm run build:package",
+    "build:package": "vite build --config vite.lib.config.ts && tsc --project tsconfig.build.json",
+    "prepack": "npm run build:package",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "lit": ">=2.1.0"
+  },
+  "devDependencies": {
+    "jsdom": "^26.1.0",
+    "lit": "^3.3.1",
+    "typescript": "^5.8.3",
+    "vite": "^6.3.5",
+    "vitest": "^5.1.1"
+  }
+}

@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Get started with NGHTML: add Angular-inspired control flow to Lit templates and Web Components."
+    />
+    <title>Getting started — NGHTML</title>
+    <link rel="stylesheet" crossorigin href="../assets/site-CSmywKRg.css">
+  </head>
+  <body>
+    <main class="demo-shell docs-shell">
+      <header class="topbar">
+        <a class="brand" href="../" aria-label="NGHTML home">
+          <span class="brand-mark">&lt;/&gt;</span>
+          <span>nghtml<span class="brand-period">.</span></span>
+        </a>
+        <nav class="topbar-actions" aria-label="Project links">
+          <a class="header-link" href="./">Getting started</a>
+          <a class="header-link" href="../demos/">Demos</a>
+          <a class="header-button" href="https://www.npmjs.com/package/@kurama-labs/nghtml" target="_blank" rel="noopener noreferrer" aria-label="View NGHTML on npm">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M1.5 1.5h21v21h-21v-21Zm3.75 3.75v13.5h6.75v-3.75H9v-6h3v9.75h6.75V5.25H5.25Z"/></svg>
+            <span aria-hidden="true">npm</span>
+          </a>
+          <a class="header-button" href="https://github.com/CamShaft/nghtml" target="_blank" rel="noopener noreferrer" aria-label="View NGHTML on GitHub">
+            <svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.67 0 8.19c0 3.62 2.29 6.69 5.47 7.77.4.08.55-.18.55-.39 0-.19-.01-.83-.01-1.51-2.01.38-2.53-.5-2.69-.95-.09-.23-.48-.95-.82-1.14-.28-.15-.68-.52-.01-.53.63-.01 1.08.59 1.23.83.72 1.23 1.87.88 2.33.67.07-.53.28-.88.51-1.08-1.78-.21-3.64-.91-3.64-4.04 0-.89.31-1.62.82-2.19-.08-.21-.36-1.04.08-2.16 0 0 .67-.22 2.2.84A7.54 7.54 0 0 1 8 3.78c.68 0 1.36.09 2 .27 1.53-1.06 2.2-.84 2.2-.84.44 1.12.16 1.95.08 2.16.51.57.82 1.29.82 2.19 0 3.14-1.87 3.83-3.65 4.04.29.25.54.74.54 1.5 0 1.08-.01 1.95-.01 2.22 0 .21.15.47.55.39A8.03 8.03 0 0 0 16 8.19C16 3.67 12.42 0 8 0Z"/></svg>
+            <span>GitHub</span>
+          </a>
+          <a class="header-button" href="https://github.com/CamShaft/nghtml/stargazers" target="_blank" rel="noopener noreferrer" aria-label="Star NGHTML on GitHub">
+            <svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="m8 11.3-4.33 2.28.83-4.82L.78 5.57l4.84-.7L8 .66l2.38 4.21 4.84.7-3.72 3.19.83 4.82L8 11.3Z"/></svg>
+            <span>Star</span>
+          </a>
+          <a class="header-button issue-button" href="https://github.com/CamShaft/nghtml/issues" target="_blank" rel="noopener noreferrer" aria-label="Open NGHTML GitHub issues">
+            <svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0Zm0 1.5a6.5 6.5 0 1 1 0 13 6.5 6.5 0 0 1 0-13ZM7.25 3.5h1.5v5h-1.5v-5Zm0 6.5h1.5v1.5h-1.5V10Z"/></svg>
+            <span>Issue</span>
+          </a>
+        </nav>
+      </header>
+
+      <section class="demo-intro">
+        <div class="eyebrow">THE QUICK START</div>
+        <h1>Getting started</h1>
+        <p>Use NGHTML control-flow templates inside Lit-powered Web Components.</p>
+      </section>
+
+      <div class="docs-content">
+        <section class="docs-section">
+          <div class="docs-step">01 / INSTALL</div>
+          <h2>Install the packages</h2>
+          <p>
+            Install NGHTML as a development dependency. Lit is a peer dependency
+            and should be installed in your app as well.
+          </p>
+          <pre class="code-example"><code>npm install lit
+npm install -D @kurama-labs/nghtml</code></pre>
+          <p>
+            NGHTML is used in your app's Lit templates and compiled by your
+            existing frontend bundler.
+          </p>
+        </section>
+
+        <section class="docs-section">
+          <div class="docs-step">02 / IMPORT</div>
+          <h2>Import <code>nghtml</code></h2>
+          <p>
+            Import the template tag from the package root. Lit provides the
+            custom-element lifecycle; NGHTML parses control flow and renders a
+            Lit template.
+          </p>
+          <pre class="code-example"><code>import { LitElement } from 'lit';
+import { nghtml } from '@kurama-labs/nghtml';
+
+interface Task {
+  id: number;
+  label: string;
+}
+
+class TaskList extends LitElement {
+  static properties = {
+    tasks: { type: Array },
+  };
+
+  tasks: Task[] = [
+    { id: 1, label: 'Explore NGHTML' },
+    { id: 2, label: 'Build a web component' },
+  ];
+
+  render() {
+    return nghtml`
+      &lt;ul&gt;
+        @for (task of ${this.tasks}; track task.id) {
+          &lt;li&gt;{{ task.label }}&lt;/li&gt;
+        } @empty {
+          &lt;li&gt;No tasks yet.&lt;/li&gt;
+        }
+      &lt;/ul&gt;
+      @if (${this.tasks.length > 0}) {
+        &lt;p&gt;You have tasks to do.&lt;/p&gt;
+      } @else {
+        &lt;p&gt;Add your first task to get started.&lt;/p&gt;
+      }
+    `;
+  }
+}
+
+customElements.define('task-list', TaskList);</code></pre>
+          <p>
+            Use <code>&lt;task-list&gt;&lt;/task-list&gt;</code> in your HTML.
+            NGHTML exports <code>nghtml</code>, <code>NghtmlSyntaxError</code>,
+            and the <code>NghtmlTemplate</code> type from its package entry point.
+          </p>
+        </section>
+
+        <section class="docs-section">
+          <div class="docs-step">03 / CONTROL FLOW</div>
+          <h2>Template syntax</h2>
+          <div class="docs-features">
+            <article>
+              <h3><code>@if</code> / <code>@else</code></h3>
+              <p>Render conditional branches and optional aliases.</p>
+            </article>
+            <article>
+              <h3><code>@for</code> / <code>@empty</code></h3>
+              <p>Render iterable values with a required tracking expression.</p>
+            </article>
+            <article>
+              <h3><code>@switch</code></h3>
+              <p>Choose matching <code>@case</code> blocks with an optional default.</p>
+            </article>
+            <article>
+              <h3><code>@let</code></h3>
+              <p>Bind a value for use in subsequent template scope.</p>
+            </article>
+          </div>
+          <p>
+            Supply JavaScript values with <code>${value}</code>, then read
+            loop and alias values with <code>{{ task.label }}</code>. Lit
+            <code>@click=${handler}</code> events and supported
+            <code>[class.*]</code>, <code>[style.*]</code>, and
+            <code>[attr.*]</code> bindings work alongside the control flow.
+            Invalid control-flow templates throw <code>NghtmlSyntaxError</code>.
+          </p>
+        </section>
+
+        <section class="docs-section">
+          <div class="docs-step">04 / EXPLORE</div>
+          <h2>See complete examples</h2>
+          <p>
+            Each demo is a separate custom element with its own route and
+            component source. The demos cover list rendering, filters, nested
+            loops, empty states, switch branches, and multi-step UI state.
+          </p>
+          <a class="button primary" href="../demos/">Explore all 10 demos →</a>
+        </section>
+      </div>
+
+      <footer class="footer">
+        <a href="../">← NGHTML home</a>
+        <span>Built with Lit and native Web Components.</span>
+      </footer>
+    </main>
+  </body>
+</html>
