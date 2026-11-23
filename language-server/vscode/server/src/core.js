@@ -247,3 +247,217 @@ export function getDocumentSymbols(text) {
   }
   return symbols;
 }
+
+function addFoldingRange(ranges, text, startOffset, endOffset, kind, endLineOverride) {
+  const start = offsetToPosition(text, startOffset);
+  const end = offsetToPosition(text, endOffset);
+  const endLine = endLineOverride ?? end.line;
+  if (endLine > start.line) {
+    ranges.push({ startLine: start.line, endLine, kind });
+  }
+}
+
+function findMatchingNghtmlBrace(text, opening) {
+  let depth = 0;
+  let quote = null;
+  let escaped = false;
+  for (let index = opening; index < text.length; index++) {
+    const char = text[index];
+    if (escaped) {
+      escaped = false;
+      continue;
+    }
+    if (quote) {
+      if (char === '\\') escaped = true;
+      else if (char === quote) quote = null;
+      continue;
+    }
+    if (text.startsWith('${', index)) {
+      const end = findMatchingBrace(text, index + 1);
+      if (end === -1) return -1;
+      index = end;
+      continue;
+    }
+    if (text.startsWith('{{', index)) {
+      const end = text.indexOf('}}', index + 2);
+      if (end === -1) return -1;
+      index = end + 1;
+      continue;
+    }
+    if (char === '"' || char === "'") {
+      quote = char;
+      continue;
+    }
+    if (char === '{') depth++;
+    if (char === '}') {
+      depth--;
+      if (depth === 0) return index;
+    }
+  }
+  return -1;
+}
+
+function getNghtmlFoldingRanges(text, start, end) {
+  const ranges = [];
+  const region = text.slice(start, end);
+  const directivePattern = /@(if|for|switch|defer)\s*\([\s\S]*?\)\s*\{|@(else\s+if)\s*\([\s\S]*?\)\s*\{|@(else|empty|case|default|placeholder|loading|error)(?:\s*\([^)]*\))?\s*\{/g;
+  let match;
+  while ((match = directivePattern.exec(region))) {
+    const directiveName = match[1] ?? match[2] ?? match[3];
+    const opening = match.index + match[0].lastIndexOf('{');
+    const closing = findMatchingNghtmlBrace(region, opening);
+    if (closing !== -1) {
+      const continuationPattern = {
+        if: /^\s*@else\b/,
+        'else if': /^\s*@else\b/,
+        for: /^\s*@empty\b/,
+        defer: /^\s*@(placeholder|loading|error)\b/,
+        placeholder: /^\s*@(loading|error)\b/,
+        loading: /^\s*@error\b/,
+      }[directiveName];
+      const continuesBranch = continuationPattern?.test(region.slice(closing + 1)) ?? false;
+      const endLine = continuesBranch
+        ? offsetToPosition(text, start + closing).line - 1
+        : undefined;
+      addFoldingRange(ranges, text, start + match.index, start + closing, 'region', endLine);
+    }
+  }
+
+  const voidTags = new Set([
+    'area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link',
+    'meta', 'param', 'source', 'track', 'wbr',
+  ]);
+  const tagStack = [];
+  const markupPattern = /<!--[\s\S]*?-->|<\/?([A-Za-z][\w:-]*)\b[^>]*>/g;
+  while ((match = markupPattern.exec(region))) {
+    if (match[0].startsWith('<!--')) {
+      addFoldingRange(ranges, text, start + match.index, start + markupPattern.lastIndex - 1, 'comment');
+      continue;
+    }
+
+    const tagName = match[1].toLowerCase();
+    if (match[0].startsWith('</')) {
+      const opening = tagStack[tagStack.length - 1];
+      if (opening?.tagName === tagName) {
+        tagStack.pop();
+        addFoldingRange(ranges, text, start + opening.offset, start + markupPattern.lastIndex, 'region');
+      }
+    } else if (!voidTags.has(tagName) && !match[0].endsWith('/>')) {
+      tagStack.push({ tagName, offset: match.index });
+    }
+  }
+
+  return ranges;
+}
+
+export function getFoldingRanges(text, standaloneNghtml = false) {
+  const regions = standaloneNghtml
+    ? [[0, text.length]]
+    : getNghtmlRegions(text);
+  return regions.flatMap(([start, end]) => getNghtmlFoldingRanges(text, start, end));
+}
+
+function getNghtmlRegions(text) {
+  const regions = [];
+  const tagPattern = /\bnghtml\s*/g;
+  let match;
+
+  while ((match = tagPattern.exec(text))) {
+    const opening = match.index + match[0].length;
+    if (text[opening] !== '`') continue;
+    const start = opening + 1;
+    for (let cursor = start; cursor < text.length; cursor++) {
+      if (text[cursor] === '\\') {
+        cursor++;
+        continue;
+      }
+      if (text[cursor] === '`') {
+        regions.push([start, cursor]);
+        tagPattern.lastIndex = cursor + 1;
+        break;
+      }
+    }
+  }
+  return regions;
+}
+
+function countHtmlTags(line) {
+  let change = 0;
+  const tags = line.match(/<\/?[A-Za-z][^>]*>/g) ?? [];
+  for (const tag of tags) {
+    if (/^<\//.test(tag) || /\/>$/.test(tag)) continue;
+    if (!/<\/[A-Za-z][^>]*>/.test(line) || line.indexOf('>') !== line.lastIndexOf('>')) {
+      change++;
+    }
+  }
+  for (const _tag of line.match(/<\/[A-Za-z][^>]*>/g) ?? []) {
+    change--;
+  }
+  return change;
+}
+
+function countDirectiveBraces(line) {
+  const withoutInterpolations = line.replace(/\$\{[^}]*\}/g, '');
+  let change = 0;
+  let quote = null;
+  for (let index = 0; index < withoutInterpolations.length; index++) {
+    const char = withoutInterpolations[index];
+    if (quote) {
+      if (char === '\\') index++;
+      else if (char === quote) quote = null;
+      continue;
+    }
+    if (char === '"' || char === "'") quote = char;
+    else if (char === '{') change++;
+    else if (char === '}') change--;
+  }
+  return change;
+}
+
+export function formatNghtmlText(text) {
+  const lines = text.split(/\r?\n/);
+  const newline = text.includes('\r\n') ? '\r\n' : '\n';
+  let directiveLevel = 0;
+  let htmlLevel = 0;
+  const formatted = [];
+
+  for (const rawLine of lines) {
+    const line = rawLine.trim();
+    if (!line) continue;
+
+    const closesDirective = /^[}]/.test(line);
+    const closesHtml = /^<\//.test(line);
+    if (closesDirective) directiveLevel = Math.max(0, directiveLevel - 1);
+    if (closesHtml) htmlLevel = Math.max(0, htmlLevel - 1);
+
+    const indent = directiveLevel + htmlLevel;
+    formatted.push(`${'  '.repeat(indent)}${line}`);
+
+    if (!closesDirective) {
+      directiveLevel += countDirectiveBraces(line);
+      directiveLevel = Math.max(0, directiveLevel);
+    } else {
+      const remaining = countDirectiveBraces(line);
+      directiveLevel = Math.max(0, directiveLevel + remaining + 1);
+    }
+
+    htmlLevel = Math.max(0, htmlLevel + countHtmlTags(line));
+  }
+
+  return formatted.join(newline);
+}
+
+export function formatNghtmlDocument(text) {
+  const regions = getNghtmlRegions(text);
+  if (regions.length === 0) return text;
+
+  let result = '';
+  let cursor = 0;
+  for (const [start, end] of regions) {
+    result += text.slice(cursor, start);
+    result += formatNghtmlText(text.slice(start, end));
+    cursor = end;
+  }
+  result += text.slice(cursor);
+  return result;
+}

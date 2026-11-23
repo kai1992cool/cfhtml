@@ -27,6 +27,7 @@
     "server/**",
     "node_modules/**",
     "language-configuration.json",
+    "syntaxes/**",
     "LICENSE",
     "README.md"
   ],
@@ -46,6 +47,18 @@
         "aliases": ["NGHTML", "nghtml"],
         "extensions": [".nghtml"],
         "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "nghtml",
+        "scopeName": "text.nghtml",
+        "path": "./syntaxes/nghtml.tmLanguage.json"
+      },
+      {
+        "scopeName": "nghtml.injection",
+        "path": "./syntaxes/nghtml-injection.tmLanguage.json",
+        "injectTo": ["source.ts", "source.tsx", "source.js", "source.jsx"]
       }
     ],
     "configuration": {

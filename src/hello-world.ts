@@ -1,5 +1,5 @@
-import { LitElement, css } from 'lit';
-import { nghtml } from './nghtml';
+import { LitElement, css } from "lit";
+import { nghtml } from "./nghtml";
 
 interface Item {
   name: string;
@@ -54,17 +54,14 @@ export class HelloWorld extends LitElement {
 
   constructor() {
     super();
-    this.name = 'world';
+    this.name = "world";
     this.showGreeting = true;
-    this.items = [
-      { name: 'Lit' },
-      { name: 'web components' },
-    ];
+    this.items = [{ name: "Lit" }, { name: "web components" }];
     this.count = 0;
     this.active = true;
     this.panelStyles = {
-      borderRadius: '4px',
-      backgroundColor: 'lightyellow',
+      borderRadius: "4px",
+      backgroundColor: "lightyellow",
     };
     this.panelWidth = 12;
   }
@@ -76,7 +73,7 @@ export class HelloWorld extends LitElement {
         <p [class.featured]=${this.active} [style.width.px]=${this.panelWidth}
            [style]=${this.panelStyles}>Hello, {{ greeting }}!</p>
         <p animate.enter="fade-in" animate.leave="fade-out">Animated paragraph</p>
-      } @else if (${this.name === 'Angular'}) {
+      } @else if (${this.name === "Angular"}) {
         <p>Hello from Angular syntax.</p>
       } @else {
         <p>The greeting is hidden.</p>
@@ -89,7 +86,9 @@ export class HelloWorld extends LitElement {
         }
       </ul>
       @switch (${this.count}) {
-        @case (0) { <p [attr.data-state]="idle">Ready</p> }
+        @case (0) { 
+          <p [attr.data-state]="idle">Ready</p> 
+        }
         @default { <p [attr.data-state]="active">Updated</p> }
       }
       @defer (on immediate) {
@@ -102,6 +101,6 @@ export class HelloWorld extends LitElement {
   }
 }
 
-if (!customElements.get('hello-world')) {
-  customElements.define('hello-world', HelloWorld);
+if (!customElements.get("hello-world")) {
+  customElements.define("hello-world", HelloWorld);
 }

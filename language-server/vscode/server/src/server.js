@@ -8,7 +8,9 @@ import { TextDocument } from 'vscode-languageserver-textdocument';
 import {
   getCompletions,
   getDocumentSymbols,
+  getFoldingRanges,
   getHover,
+  formatNghtmlDocument,
   validateNghtmlDocument,
 } from './core.js';
 
@@ -22,6 +24,8 @@ connection.onInitialize(() => ({
     completionProvider: { resolveProvider: false, triggerCharacters: ['@'] },
     hoverProvider: true,
     documentSymbolProvider: true,
+    documentFormattingProvider: true,
+    foldingRangeProvider: true,
   },
 }));
 
@@ -72,6 +76,31 @@ connection.onHover((params) => {
 connection.onDocumentSymbol((params) => {
   const document = documents.get(params.textDocument.uri);
   return document ? getDocumentSymbols(document.getText()) : [];
+});
+
+connection.onFoldingRanges((params) => {
+  const document = documents.get(params.textDocument.uri);
+  if (!document) return [];
+  return getFoldingRanges(
+    document.getText(),
+    /\.nghtml(?:$|[?#])/i.test(params.textDocument.uri),
+  );
+});
+
+connection.onDocumentFormatting((params) => {
+  const document = documents.get(params.textDocument.uri);
+  if (!document) return [];
+  const text = document.getText();
+  const formatted = formatNghtmlDocument(text);
+  if (formatted === text) return [];
+
+  return [{
+    range: {
+      start: { line: 0, character: 0 },
+      end: document.positionAt(text.length),
+    },
+    newText: formatted,
+  }];
 });
 
 documents.listen(connection);

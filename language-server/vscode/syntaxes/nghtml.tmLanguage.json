@@ -1,0 +1,114 @@
+{
+  "scopeName": "text.nghtml",
+  "patterns": [
+    { "include": "#comment" },
+    { "include": "#interpolation" },
+    { "include": "#templateExpression" },
+    { "include": "#directive" },
+    { "include": "#tag" }
+  ],
+  "repository": {
+    "comment": {
+      "name": "comment.block.html",
+      "begin": "<!--",
+      "end": "-->"
+    },
+    "interpolation": {
+      "name": "meta.interpolation.nghtml",
+      "begin": "\\{\\{",
+      "beginCaptures": {
+        "0": { "name": "punctuation.section.embedded.begin.nghtml" }
+      },
+      "end": "\\}\\}",
+      "endCaptures": {
+        "0": { "name": "punctuation.section.embedded.end.nghtml" }
+      },
+      "patterns": [
+        { "include": "#expression" }
+      ]
+    },
+    "templateExpression": {
+      "name": "meta.embedded.expression.nghtml",
+      "begin": "\\$\\{",
+      "beginCaptures": {
+        "0": { "name": "punctuation.section.embedded.begin.nghtml" }
+      },
+      "end": "\\}",
+      "endCaptures": {
+        "0": { "name": "punctuation.section.embedded.end.nghtml" }
+      },
+      "patterns": [
+        { "include": "#expression" }
+      ]
+    },
+    "expression": {
+      "patterns": [
+        {
+          "match": "\\b(?:true|false|null|undefined|this|new|typeof|instanceof|in|of|as)\\b",
+          "name": "keyword.operator.expression.nghtml"
+        },
+        {
+          "match": "\\b\\d+(?:\\.\\d+)?\\b",
+          "name": "constant.numeric.nghtml"
+        },
+        {
+          "match": "\"(?:[^\"\\\\]|\\\\.)*\"|'(?:[^'\\\\]|\\\\.)*'",
+          "name": "string.quoted.nghtml"
+        },
+        {
+          "match": "\\b[A-Za-z_$][\\w$]*\\b",
+          "name": "variable.other.nghtml"
+        },
+        {
+          "match": "[=!<>+*/%&|?:.-]+",
+          "name": "keyword.operator.nghtml"
+        }
+      ]
+    },
+    "directive": {
+      "match": "@(?:if|else\\s+if|else|for|empty|switch|case|default|let|defer|placeholder|loading|error)\\b",
+      "name": "keyword.control.nghtml"
+    },
+    "tag": {
+      "begin": "(</?)([A-Za-z][\\w:-]*)",
+      "beginCaptures": {
+        "1": { "name": "punctuation.definition.tag.html" },
+        "2": { "name": "entity.name.tag.html" }
+      },
+      "end": "(/?>)",
+      "endCaptures": {
+        "1": { "name": "punctuation.definition.tag.html" }
+      },
+      "patterns": [
+        {
+          "match": "\\s+([@\\w:-]+(?:\\.[\\w-]+)*|\\[[^\\]]+\\])",
+          "captures": {
+            "1": { "name": "entity.other.attribute-name.html" }
+          }
+        },
+        {
+          "begin": "=\"",
+          "beginCaptures": {
+            "0": { "name": "punctuation.definition.string.begin.html" }
+          },
+          "end": "\"",
+          "endCaptures": {
+            "0": { "name": "punctuation.definition.string.end.html" }
+          },
+          "name": "string.quoted.double.html"
+        },
+        {
+          "begin": "='",
+          "beginCaptures": {
+            "0": { "name": "punctuation.definition.string.begin.html" }
+          },
+          "end": "'",
+          "endCaptures": {
+            "0": { "name": "punctuation.definition.string.end.html" }
+          },
+          "name": "string.quoted.single.html"
+        }
+      ]
+    }
+  }
+}
